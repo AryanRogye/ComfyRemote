@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+
+# Xcode
+*.xcuserdata
+*.xccheckout
+*.xcuserstate
+*.xcworkspace/xcshareddata/*
+DerivedData/
+*.moved-aside
+*.xcuserdatad
+*.idea/
+
+# SwiftPM / Swift build
+.build/
+.swiftpm/
+.swift-version
+
+# Android
+.gradle/
+local.properties
+.idea/
+*.iml
+build/
+captures/
+.externalNativeBuild/
+*.log
+
+# Kotlin/Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs/
+
+# Scripts
+Scripts/*.sh~
+
+# VSCode (if you open with it sometimes)
+.vscode/
+
+# System files
+Thumbs.db
+ehthumbs.db
