@@ -41,6 +41,7 @@ Scripts/*.sh~
 
 # VSCode (if you open with it sometimes)
 .vscode/
+.idea/
 
 # System files
 Thumbs.db
