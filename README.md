@@ -10,5 +10,3 @@ This is **not a full framework**, but a clean base to build your own remote cont
 - Swift-based iOS server with live connection status
 - Java-based Fire TV client with persistent reconnect logic
 - Swift Server Sending Commands to Fire TV (For You To Implement Client Side)
-
-## 🗂 Folder Structure
