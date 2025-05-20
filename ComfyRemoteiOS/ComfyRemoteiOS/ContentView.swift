@@ -9,22 +9,22 @@ import SwiftUI
 import Network
 
 struct ContentView: View {
-    @StateObject private var server = ComfyTCPServer()
+    @StateObject private var server : ComfyTCPServer = .shared
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("📡 ComfyRemote iOS Server")
-                .font(.title)
-
-            Text("Status: \(server.status)")
-                .foregroundStyle(.secondary)
-
-            Button(server.isRunning ? "Stop Server" : "Start Server") {
-                server.isRunning ? server.stop() : server.start()
+        ZStack {
+            Color.white.ignoresSafeArea(.all)
+            VStack(spacing: 20) {
+                Text("📡 ComfyRemote iOS Server")
+                    .font(.title)
+                    .foregroundStyle(.black)
+                ServerControls()
+                DPadLayout()
+                
+                Spacer()
             }
-            .buttonStyle(.borderedProminent)
+            .padding()
         }
-        .padding()
     }
 }
 

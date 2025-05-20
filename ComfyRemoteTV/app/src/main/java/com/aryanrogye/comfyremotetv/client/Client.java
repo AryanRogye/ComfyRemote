@@ -2,7 +2,9 @@ package com.aryanrogye.comfyremotetv.client;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -10,6 +12,50 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Client {
     private Socket socket;
     private final AtomicBoolean forceDisconnect = new AtomicBoolean(false);
+    private volatile boolean readingStarted = false;
+
+    private void handleMessage(String message) {
+        switch (message.trim()) {
+            case "UP":
+                // Handle UP
+                break;
+            case "DOWN":
+                // Handle DOWN
+                break;
+            case "LEFT":
+                // etc.
+                break;
+            default:
+                Log.e("ComfyClient", "Unknown message: " + message);
+                break;
+        }
+    }
+    private void startReadingFromServer() {
+        new Thread(() -> {
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String message;
+
+                while ((message = in.readLine()) != null) {
+                    Log.e("ComfyClient", "📥 Received from server: " + message);
+                    handleMessage(message);
+                }
+
+                } catch (Exception e) {
+                Log.e("ComfyClient", "Error reading from server: " + e.getMessage());
+            } finally {
+                readingStarted = false;
+                if (socket != null && !socket.isClosed()) {
+                    try {
+                        socket.close();
+                        Log.e("ComfyClient", "Socket closed");
+                    } catch (IOException e) {
+                        Log.e("ComfyClient", "Error closing socket: " + e.getMessage());
+                    }
+                }
+            }
+        }).start();
+    }
 
     public void pollServerConnection(String ip, int port, AtomicBoolean serverStarted ,Runnable onStatusChange) {
         new Thread(() -> {
@@ -19,9 +65,11 @@ public class Client {
                 boolean currentlyConnected = checkConnection(ip, port);
 
                 ///  This will show the current state of the connection
-//                if (currentlyConnected) {
-//                    Log.e("ComfyClient", "🟢 Connected Connected Connected");
-//                }
+                if (currentlyConnected && socket != null && !socket.isClosed() && !readingStarted) {
+                    readingStarted = true;
+                    // Only start reading once per connection
+                    startReadingFromServer();
+                }
 
                 // Connection state changed from connected to disconnected
                 if (wasConnected && !currentlyConnected) {
@@ -69,15 +117,6 @@ public class Client {
             // Method 1: Check if socket is connected according to Java
             if (!socket.isConnected()) {
                 Log.d("ComfyClient", "Socket reports as not connected");
-                closeSocket();
-                return false;
-            }
-
-            // Method 2: Try to send data
-            try {
-                socket.sendUrgentData(0xFF);
-            } catch (IOException e) {
-                Log.d("ComfyClient", "Send urgent data failed: " + e.getMessage());
                 closeSocket();
                 return false;
             }
